@@ -30,10 +30,6 @@ public class ChampionMasteries
         string region,
         string name)
     {
-        // var queryParams = HttpUtility.ParseQueryString(req.Url.Query);
-        // string? name = queryParams["name"];
-        // string? region = queryParams["region"];
-
         if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(region))
         {
             return null;
@@ -45,23 +41,4 @@ public class ChampionMasteries
             .GetChampionMasteriesAsync(regionEnum, summoner.Id);
         return championMasteries;
     }
-
-    // [Function("ChampionMasteries")]
-    // public async Task<IEnumerable<ChampionMastery>?> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData req)
-    // {
-    //     var queryParams = HttpUtility.ParseQueryString(req.Url.Query);
-    //     string? name = queryParams["name"];
-    //     string? region = queryParams["region"];
-    //
-    //     if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(region))
-    //     {
-    //         return null;
-    //     }
-    //
-    //     var regionEnum = Enum.Parse<Region>(region, true);
-    //     var summoner = await _riotApi.Summoner.GetSummonerByNameAsync(regionEnum, name);
-    //     var championMasteries = await _riotApi.ChampionMastery
-    //         .GetChampionMasteriesAsync(regionEnum, summoner.Id);
-    //     return championMasteries;
-    // }
 }
