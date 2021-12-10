@@ -1,4 +1,5 @@
 using System;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
@@ -34,6 +35,7 @@ public class Summoners
             return null;
         }
 
+        name = Regex.Replace(name, @"\s+", "");
         var regionEnum = Enum.Parse<Region>(region, true);
         var summoner = await _riotApi.Summoner.GetSummonerByNameAsync(regionEnum, name);
         return summoner;

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
@@ -26,7 +27,7 @@ public class ChampionMasteries
         [HttpTrigger(
             AuthorizationLevel.Anonymous,
             "get",
-            Route = "ChampionMasteries/{region:alpha}/{name:alpha}")] HttpRequestData req,
+            Route = "ChampionMasteries/{region}/{name}")] HttpRequestData req,
         string region,
         string name)
     {
@@ -35,6 +36,7 @@ public class ChampionMasteries
             return null;
         }
 
+        name = Regex.Replace(name, @"\s+", "");
         var regionEnum = Enum.Parse<Region>(region, true);
         var summoner = await _riotApi.Summoner.GetSummonerByNameAsync(regionEnum, name);
         var championMasteries = await _riotApi.ChampionMastery
