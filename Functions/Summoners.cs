@@ -26,9 +26,11 @@ public class Summoners
         [HttpTrigger(
             AuthorizationLevel.Anonymous,
             "get",
-            Route = "Summoners/{region}/{name}")] HttpRequestData req,
+            Route = "Summoners/{region}/{name}")]
+        HttpRequestData req,
         string region,
-        string name)
+        string name,
+        FunctionContext executionContext)
     {
         if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(region))
         {

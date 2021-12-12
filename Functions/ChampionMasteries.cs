@@ -27,9 +27,11 @@ public class ChampionMasteries
         [HttpTrigger(
             AuthorizationLevel.Anonymous,
             "get",
-            Route = "ChampionMasteries/{region}/{name}")] HttpRequestData req,
+            Route = "ChampionMasteries/{region}/{name}")]
+        HttpRequestData req,
         string region,
-        string name)
+        string name,
+        FunctionContext executionContext)
     {
         if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(region))
         {

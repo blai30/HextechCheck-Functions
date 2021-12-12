@@ -6,24 +6,25 @@ using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
 using RiotSharp;
 using RiotSharp.Endpoints.Interfaces.Static;
+using RiotSharp.Endpoints.StaticDataEndpoint.Champion;
 
 namespace HextechCheck.Functions;
 
-public class ChampionNames
+public class Champions
 {
     private readonly ILogger _logger;
     private readonly RiotApi _riotApi;
     private readonly IDataDragonEndpoints _dataDragon;
 
-    public ChampionNames(ILoggerFactory loggerFactory, RiotApi riotApi, IDataDragonEndpoints dataDragon)
+    public Champions(ILoggerFactory loggerFactory, RiotApi riotApi, IDataDragonEndpoints dataDragon)
     {
-        _logger = loggerFactory.CreateLogger<ChampionNames>();
+        _logger = loggerFactory.CreateLogger<Champions>();
         _riotApi = riotApi;
         _dataDragon = dataDragon;
     }
 
-    [Function("ChampionNames")]
-    public async Task<Dictionary<string, string>?> Run(
+    [Function("Champions")]
+    public async Task<Dictionary<int, ChampionStatic>> Run(
         [HttpTrigger(
             AuthorizationLevel.Anonymous,
             "get")]
@@ -32,14 +33,14 @@ public class ChampionNames
     {
         var versions = await _riotApi.DataDragon.Versions.GetAllAsync();
         string? latestVersion = versions.FirstOrDefault();
-        var champions = await _dataDragon.Champions.GetAllAsync(latestVersion);
+        var championList = await _dataDragon.Champions.GetAllAsync(latestVersion, fullData: false);
 
-        var championNames = new Dictionary<string, string>();
-        foreach (var champion in champions.Champions.Values)
+        var champions = new Dictionary<int, ChampionStatic>();
+        foreach (var champion in championList.Champions.Values)
         {
-            championNames[champion.Id.ToString()] = champion.Name;
+            champions[champion.Id] = champion;
         }
 
-        return championNames;
+        return champions;
     }
 }
