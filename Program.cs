@@ -16,9 +16,7 @@ var host = new HostBuilder()
         });
 
         string? apiKey = Environment.GetEnvironmentVariable("RIOTGAMES_API_KEY", EnvironmentVariableTarget.Process);
-        Console.WriteLine(apiKey);
         builder.Services.AddSingleton(RiotApi.GetDevelopmentInstance(apiKey));
-        builder.Services.AddSingleton(provider => provider.GetRequiredService<RiotApi>().DataDragon);
     })
     .Build();
 
