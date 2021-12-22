@@ -1,0 +1,16 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "DefaultEndpointsProtocol=https;AccountName=example;AccountKey=example;EndpointSuffix=core.windows.net",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
+    "RIOTGAMES_API_KEY": "RGAPI-80f732ce-437c-411b-ab0b-26a15f9f24e5",
+    "APPINSIGHTS_INSTRUMENTATIONKEY": "80f732ce-437c-411b-ab0b-26a15f9f24e5",
+    "FUNCTIONS_EXTENSION_VERSION": "~4",
+    "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "DefaultEndpointsProtocol=https;AccountName=example;AccountKey=example;EndpointSuffix=core.windows.net",
+    "WEBSITE_CONTENTSHARE": "example"
+  },
+  "Host": {
+    "LocalHttpPort": 7071,
+    "CORS": "http://localhost:3000,https://localhost:3000"
+  }
+}
