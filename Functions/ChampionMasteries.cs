@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using AutoMapper;
+using HextechCheck.Models;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
 using RiotSharp;
-using RiotSharp.Endpoints.ChampionMasteryEndpoint;
+using RiotSharp.Endpoints.Interfaces.Static;
+using RiotSharp.Endpoints.StaticDataEndpoint;
 using RiotSharp.Misc;
 
 namespace HextechCheck.Functions;
@@ -14,16 +18,20 @@ namespace HextechCheck.Functions;
 public class ChampionMasteries
 {
     private readonly ILogger _logger;
+    private readonly IMapper _mapper;
     private readonly RiotApi _riotApi;
+    private readonly IDataDragonEndpoints _dataDragon;
 
-    public ChampionMasteries(ILoggerFactory loggerFactory, RiotApi riotApi)
+    public ChampionMasteries(ILoggerFactory loggerFactory, IMapper mapper, RiotApi riotApi)
     {
         _logger = loggerFactory.CreateLogger<ChampionMasteries>();
+        _mapper = mapper;
         _riotApi = riotApi;
+        _dataDragon = DataDragonEndpoints.GetInstance();
     }
 
     [Function("ChampionMasteries")]
-    public async Task<IEnumerable<ChampionMastery>?> Run(
+    public async Task<IEnumerable<ChampionMasteryDto>?> Run(
         [HttpTrigger(
             AuthorizationLevel.Anonymous,
             "get",
@@ -43,6 +51,14 @@ public class ChampionMasteries
         var summoner = await _riotApi.Summoner.GetSummonerByNameAsync(regionEnum, name);
         var championMasteries = await _riotApi.ChampionMastery
             .GetChampionMasteriesAsync(regionEnum, summoner.Id);
-        return championMasteries;
+
+        var versions = await _dataDragon.Versions.GetAllAsync();
+        string? latestVersion = versions.FirstOrDefault();
+        var championList = await _dataDragon.Champions.GetAllAsync(latestVersion, fullData: false);
+        var champions = championList.Champions.Values.ToDictionary(champion => champion.Id);
+
+        var dto = _mapper.Map<IEnumerable<ChampionMasteryDto>?>(championMasteries);
+
+        return dto;
     }
 }

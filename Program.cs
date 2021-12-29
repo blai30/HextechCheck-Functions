@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using System.Text.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -14,6 +15,8 @@ var host = new HostBuilder()
             options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
             options.PropertyNameCaseInsensitive = false;
         });
+
+        builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
         string? apiKey = Environment.GetEnvironmentVariable("RIOTGAMES_API_KEY", EnvironmentVariableTarget.Process);
         builder.Services.AddSingleton(RiotApi.GetDevelopmentInstance(apiKey));
