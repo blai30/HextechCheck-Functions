@@ -30,10 +30,13 @@ public class Champions
         HttpRequestData req,
         FunctionContext executionContext)
     {
+        // Fetch static champions using latest version.
         var versions = await _dataDragon.Versions.GetAllAsync();
         string? latestVersion = versions.FirstOrDefault();
         var championList = await _dataDragon.Champions.GetAllAsync(latestVersion, fullData: false);
         var champions = championList.Champions.Values.ToDictionary(champion => champion.Id);
+
+        _logger.LogTrace($"Fetched {champions.Count} champions for version {latestVersion}");
         return champions;
     }
 }

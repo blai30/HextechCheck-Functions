@@ -38,11 +38,14 @@ public class ChampionMasteries
             return null;
         }
 
+        // Fetch summoner by name and region from route.
         name = Regex.Replace(name, @"\s+", "");
         var regionEnum = Enum.Parse<Region>(region, true);
         var summoner = await _riotApi.Summoner.GetSummonerByNameAsync(regionEnum, name);
         var championMasteries = await _riotApi.ChampionMastery
             .GetChampionMasteriesAsync(regionEnum, summoner.Id);
+
+        _logger.LogTrace($"Fetched champion masteries for {name} in {region}");
         return championMasteries;
     }
 }
