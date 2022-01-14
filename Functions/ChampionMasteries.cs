@@ -19,15 +19,15 @@ public class ChampionMasteries
 {
     private readonly ILogger _logger;
     private readonly IMapper _mapper;
-    private readonly RiotApi _riotApi;
     private readonly IDataDragonEndpoints _dataDragon;
+    private readonly RiotApi _riotApi;
 
     public ChampionMasteries(ILoggerFactory loggerFactory, IMapper mapper, RiotApi riotApi)
     {
         _logger = loggerFactory.CreateLogger<ChampionMasteries>();
         _mapper = mapper;
-        _riotApi = riotApi;
         _dataDragon = DataDragonEndpoints.GetInstance();
+        _riotApi = riotApi;
     }
 
     [Function("ChampionMasteries")]
@@ -46,19 +46,26 @@ public class ChampionMasteries
             return null;
         }
 
+        // Fetch summoner by name and region from route.
         name = Regex.Replace(name, @"\s+", "");
         var regionEnum = Enum.Parse<Region>(region, true);
         var summoner = await _riotApi.Summoner.GetSummonerByNameAsync(regionEnum, name);
         var championMasteries = await _riotApi.ChampionMastery
             .GetChampionMasteriesAsync(regionEnum, summoner.Id);
 
+        // Fetch static champions using latest version.
         var versions = await _dataDragon.Versions.GetAllAsync();
         string? latestVersion = versions.FirstOrDefault();
         var championList = await _dataDragon.Champions.GetAllAsync(latestVersion, fullData: false);
         var champions = championList.Champions.Values.ToDictionary(champion => champion.Id);
 
-        var dto = _mapper.Map<IEnumerable<ChampionMasteryDto>?>(championMasteries);
+        var dtos = _mapper.Map<IList<ChampionMasteryDto>>(championMasteries);
+        for (int i = 0; i < dtos.Count; i++)
+        {
+            dtos[i].Champion = champions[(int) championMasteries[i].ChampionId];
+        }
 
-        return dto;
+        _logger.LogTrace($"Fetched champion masteries for {name} in {region}");
+        return dtos;
     }
 }

@@ -1,4 +1,4 @@
-﻿using AutoMapper.Configuration;
+﻿using AutoMapper;
 using HextechCheck.Models;
 using RiotSharp.Endpoints.ChampionMasteryEndpoint;
 
@@ -8,15 +8,6 @@ public class MappingProfile : MapperConfigurationExpression
 {
     public MappingProfile()
     {
-        CreateMap<ChampionMastery, ChampionMasteryDto>()
-            .ForPath(
-                e => e.Champion.Id,
-                opt => opt
-                    .MapFrom(e => e.ChampionId))
-            .ForPath(
-                e => e.Summoner.Id,
-                opt => opt
-                    .MapFrom(e => e.SummonerId))
-            .ReverseMap();
+        CreateMap<ChampionMastery, ChampionMasteryDto>();
     }
 }

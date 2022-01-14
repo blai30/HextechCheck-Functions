@@ -37,8 +37,11 @@ public class Leagues
             return null;
         }
 
+        // Fetch leagues by summoner Id and region from route.
         var regionEnum = Enum.Parse<Region>(region, true);
         var leagues = await _riotApi.League.GetLeagueEntriesBySummonerAsync(regionEnum, summonerId);
+
+        _logger.LogTrace($"Fetched {leagues.Count} leagues for summoner {summonerId} in {region}");
         return leagues;
     }
 }

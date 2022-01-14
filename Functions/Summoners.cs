@@ -37,9 +37,12 @@ public class Summoners
             return null;
         }
 
+        // Fetch summoner by name and region from route.
         name = Regex.Replace(name, @"\s+", "");
         var regionEnum = Enum.Parse<Region>(region, true);
         var summoner = await _riotApi.Summoner.GetSummonerByNameAsync(regionEnum, name);
+
+        _logger.LogTrace($"Fetched summoner {summoner.Name} in {region}");
         return summoner;
     }
 }
